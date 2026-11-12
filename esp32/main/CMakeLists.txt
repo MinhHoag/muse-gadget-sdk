@@ -110,6 +110,15 @@ if(CONFIG_HOMEHUB_RETERMINAL_SHT4X)
     list(APPEND GADGET_SRCS "reterminal_sht4x.c")
 endif()
 
+if(CONFIG_MAP_TODO)
+    list(APPEND GADGET_SRCS
+        "map_store.c"
+        "map_pet.c"
+        "map_commands.c"
+        "map_bridge.c"
+    )
+endif()
+
 if(CONFIG_HOMEHUB_VOICE)
     list(APPEND GADGET_SRCS
         "voice.c"

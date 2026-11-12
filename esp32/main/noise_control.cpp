@@ -16,6 +16,10 @@
 
 #include "ble_commands.h"
 #include "noise_control.h"
+
+#if CONFIG_MAP_TODO
+#include "map_bridge.h"
+#endif
 #include "stack_monitor.h"
 #include "noise_upgrade.h"
 #include "noise_tunnel_internal.h"
@@ -1389,6 +1393,11 @@ static char *build_register_json(void) {
     add_register_metadata_string(&metadata, params, "network_ssid", wifi_ssid);
 
     cJSON *commands = cJSON_CreateObject();
+#if CONFIG_MAP_TODO
+    for (const char *const *name = map_command_names(); name && *name; name++) {
+        add_command(commands, *name, map_command_description(*name), nullptr, nullptr);
+    }
+#endif
     add_command(commands, "device.health",
                 "Report basic Link health, including battery level (percent), "
                 "voltage, and whether it is charging or on USB power; each is "

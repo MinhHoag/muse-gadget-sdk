@@ -1,0 +1,46 @@
+# MAP on a Seeed XIAO ESP32-S3 Sense, no display, no microphone.
+#
+# Copy to muse-gadget-sdk/esp32/devices/sdkconfig.map-sense and build with:
+#   idf.py -B build-map -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;devices/sdkconfig.map-sense" build
+#
+# Or add a board.sh case:  map-sense) profile=map-sense; target=esp32s3 ;;
+#
+# This profile is the Sense's status-light-only baseline (see
+# sdkconfig.seeed-xiao-s3-sense) plus MAP. No camera, no audio, no display:
+# the e-ink panel comes in a later revision.
+
+# ---- chip and memory -----------------------------------------------------
+CONFIG_IDF_TARGET="esp32s3"
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="8MB"
+CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_QUAD=n
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_BT_NIMBLE_MEM_ALLOC_MODE_EXTERNAL=y
+
+# ---- board: status light and the one BOOT button -------------------------
+# The XIAO has a single user RGB LED on GPIO21 in some revisions; the Sense
+# carrier does not expose it on a standard pin, so keep the no-light backend
+# and watch the console instead.
+CONFIG_HOMEHUB_LED_BACKEND_NONE=y
+CONFIG_HOMEHUB_BUTTON_GPIO=0
+CONFIG_HOMEHUB_BUTTON_LABEL="BOOT"
+CONFIG_HOMEHUB_BLE_NAME_SUFFIX="-MAP"
+
+# ---- MAP -----------------------------------------------------------------
+CONFIG_MAP_TODO=y
+CONFIG_MAP_USER_ID="9"
+
+# ---- power: MAP is an e-ink pet, not a LAN hub ---------------------------
+# The tunnel costs ~60 KB internal RAM plus up to 256 KB for discovery
+# results, and this build has no LAN features to offer.
+CONFIG_HOMEHUB_TUNNEL=n
+
+# ---- keep the flash layout the SDK expects -------------------------------
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_muse_8mb.csv"

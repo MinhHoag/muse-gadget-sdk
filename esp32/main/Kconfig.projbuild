@@ -578,3 +578,35 @@ menu "ESP32 Device SDK"
             locks read protection. No shared software attestation key is used.
 
 endmenu
+
+# MAP (Muse AI Pal) — todo list and pet commands.
+#
+# Append this block to the end of main/Kconfig.projbuild (the SDK's menu).
+# It is a snippet, not a standalone Kconfig file, because ESP-IDF only
+# auto-includes Kconfig and Kconfig.projbuild from a component.
+
+menu "MAP (Muse AI Pal)"
+
+    config MAP_TODO
+        bool "MAP: todo list and pet commands (todo.*, pet.*)"
+        default n
+        help
+            Advertise MAP's own commands to Muse and keep a local mirror of
+            the TodoProj task list in NVS. Muse owns the network side: it
+            reads GET /user/<id>, POSTs new tasks, and acknowledges each one
+            with todo.sync_ack. The pet's mood follows the tasks: completing
+            one feeds it.
+
+            Needs a small NVS namespace ("map") and about 12 KB of RAM.
+            Off by default so existing board builds are unchanged.
+
+    config MAP_USER_ID
+        string "TodoProj user id that MAP mirrors"
+        depends on MAP_TODO
+        default "9"
+        help
+            The id after /user/ in the MockAPI URL. The esp32 test account
+            is 9. The device never calls the API itself; this is only used
+            for the userId field on locally created tasks.
+
+endmenu

@@ -43,6 +43,10 @@
 #include "lwip/ip4_addr.h"
 
 #include "identity.h"
+
+#if CONFIG_MAP_TODO
+#include "map_bridge.h"
+#endif
 #include "sdk_token_console.h"
 #include "config_store.h"
 #include "wifi_mgr.h"
@@ -1864,6 +1868,11 @@ static cJSON *bug_report_command(
 static cJSON *on_ws_command(
     const char *command, cJSON *params, const char *request_id,
     noise_ctrl_session_generation_t session_generation) {
+#if CONFIG_MAP_TODO
+    if (map_handles_command(command)) {
+        return map_handle_command(command, params);
+    }
+#endif
 #if CONFIG_HOMEHUB_BLE_COMMANDS
     if (ble_commands_handles(command)) {
         return ble_commands_handle(command, params, request_id, session_generation);
@@ -2581,6 +2590,11 @@ void app_run(void) {
     }
 
     config_store_init();
+#if CONFIG_MAP_TODO
+    if (!map_bridge_init()) {
+        ESP_LOGW(TAG, "MAP storage did not start; todo.* stays unadvertised");
+    }
+#endif
     wifi_known_init();
 
     identity_init();
